@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request as req
+from flask import Flask, render_template, request as req, redirect
+import job_scrap
 
-app = Flask("Search my job")
+app = Flask(__name__)
 
 
 @app.route('/')
@@ -9,10 +10,15 @@ def index():  # put application's code here
 
 
 @app.route('/search')
-def contact():
+def search():
     keyword = req.args.get('keyword')
-    return render_template("report.html", keyword=keyword)
+    if keyword:
+        keyword = keyword.lower()
+        result = job_scrap.scrap(keyword)
+        return render_template("report.html", keyword=keyword, result=result)
+    else:
+        return redirect("/")
 
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run()  # Flask
